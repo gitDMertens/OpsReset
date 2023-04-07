@@ -18,7 +18,7 @@
 
     $(document).ready(function () {
         $("[id=ddlbLocation]").on('change', getTracks);
-        $("[id=ddlbTrack]").on('change', getCars);
+        $("[id=ddlbTrack]").on('change', ddlbTrack_OnChange);
         $("[id=btnAdd]").on('click', addCar);
 
         $('#carList tbody').on('click', '.name', function () {
@@ -78,11 +78,33 @@
                 }
                 $('#ddlbTrack').empty();
                 $("#ddlbTrack").html(s);
-                getCars();
+                ddlbTrack_OnChange();
             }
         });
     }
 
+    function ddlbTrack_OnChange() {
+        getTrackDetails();
+        getCars();
+    }
+
+    function getTrackDetails() {
+        var parm = {
+            location: $('#ddlbLocation').find(":selected").val(),
+            track: $('#ddlbTrack').find(":selected").val()
+        };
+        $.ajax({
+            type: "GET",
+            url: "/Home/getTrackDetails",
+            data: parm,
+            success: function (data) {
+                // Add labels for track length and allowable car types
+                // populate from data.TrackLength and data.ValidCarTypes[]
+                $('#lblTrackLength').text(data.TrackLength) + "ft";
+                $('#lblAllowableCarTypes').text(data.ValidCarTypes.join(', '));
+            }
+        });
+    }
     function getCars() {
         if (carTable == null) {
             carTable = $('#carlist').dataTable({
@@ -104,7 +126,6 @@
                 columns: [
                     {
                         defaultContent: '<input type="button" class="name" value="Remove"/>'
-
                     },
                     { data: 'Number' },
                     { data: 'Road' },
@@ -142,6 +163,11 @@
 <div class="row group">
     <select class="form-control" id="ddlbLocation" name="ddlbLocation"></select>
     <select class="form-control" id="ddlbTrack" name="ddlbTrack"></select>
+    <label class="form-control" id="lblTrackLength" name="lblTrackLength">60ft</label>
+</div>
+
+<div class="row">
+    <label class="form-control" id="lblAllowableCarTypes" name="lblAllowableCarTypes">Potentially longlist of car types</label>
 </div>
 
 <div class="row">

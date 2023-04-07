@@ -13,8 +13,8 @@ namespace CarLocation.Controllers
 
         public ActionResult Index()
         {
-            List<string> locations = locationRoster.GetLocations();
-            List<string> tracks = locationRoster.GetTracks(locations.First());
+            //List<string> locations = locationRoster.GetLocations();
+            //List<string> tracks = locationRoster.GetTracks(locations.First());
             return View();
         }
 
@@ -34,6 +34,11 @@ namespace CarLocation.Controllers
                 displayText = x,
                 value = x
             }).ToList(), JsonRequestBehavior.AllowGet);
+        }
+
+        public ActionResult getTrackDetails(string location, string track)
+        {
+            return Json(locationRoster.GetTrackDetails(location, track), JsonRequestBehavior.AllowGet);
         }
 
         public ActionResult getCars(string track, string location)
